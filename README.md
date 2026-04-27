@@ -53,7 +53,7 @@ I built this project using a clean 3-layer architecture following standard Sprin
 
 ## Demo Video
 
-▶️ **[Watch the full demo here](PASTE_YOUR_VIDEO_LINK_HERE)**
+▶️ **[Watch the full demo here](https://www.youtube.com/watch?v=YeWX5llQYtU)**
 
 > In this video I walk through the project architecture, explain each layer of the code, and demonstrate all 6 API endpoints live using Swagger UI.
 
