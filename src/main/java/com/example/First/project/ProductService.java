@@ -1,5 +1,7 @@
 package com.example.First.project;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,25 +16,28 @@ public class ProductService {
     }
 
     public Product getProduct(int id) {
-        // FIX: was orElseThrow() which crashes when product not found,
-        // but controller was checking for null — now consistent
-        return repo.findById(id).orElse(null);
+        return repo.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
     }
 
     public List<Product> getAllProducts() {
         return repo.findAll();
     }
 
-    public Product createProject(Product p) {
+    public Product createProduct(Product p) {
+        if (p.getName() == null || p.getName().isBlank()) {
+            throw new ProductNotFoundException("Name cannot be empty");
+        }
+        if(p.getPrice() <= 0){
+            throw new RuntimeException("Price cannot be negative or zero");
+        }
         return repo.save(p);
     }
 
     public Product updateProduct(int id, Product np) {
-        Product p = repo.findById(id).orElse(null);
-        if (p == null) return null;
-        p.setName(np.getName());
-        p.setPrice(np.getPrice());
-        return repo.save(p);
+        Product existing = repo.findById(id).orElseThrow(() -> new ProductNotFoundException("Product not found"));
+        existing.setName(np.getName());
+        existing.setPrice(np.getPrice());
+        return repo.save(existing);
     }
 
     public List<Product> getProductByName(String name) {
@@ -40,6 +45,9 @@ public class ProductService {
     }
 
     public void deleteProductById(int id) {
+        if(repo.findById(id) == null){
+            throw new ProductNotFoundException("Item not found");
+        }
         repo.deleteById(id);
     }
 }
