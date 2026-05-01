@@ -1,7 +1,8 @@
-package com.example.First.project;
+package com.example.First.project.service;
 
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.example.First.project.exceptions.ProductNotFoundException;
+import com.example.First.project.model.Product;
+import com.example.First.project.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -9,9 +10,9 @@ import java.util.List;
 @Service
 public class ProductService {
 
-    private final Repo repo;
+    private final ProductRepository repo;
 
-    public ProductService(Repo repo) {
+    public ProductService(ProductRepository repo) {
         this.repo = repo;
     }
 
@@ -24,12 +25,6 @@ public class ProductService {
     }
 
     public Product createProduct(Product p) {
-        if (p.getName() == null || p.getName().isBlank()) {
-            throw new ProductNotFoundException("Name cannot be empty");
-        }
-        if(p.getPrice() <= 0){
-            throw new RuntimeException("Price cannot be negative or zero");
-        }
         return repo.save(p);
     }
 
@@ -45,9 +40,7 @@ public class ProductService {
     }
 
     public void deleteProductById(int id) {
-        if(repo.findById(id) == null){
-            throw new ProductNotFoundException("Item not found");
-        }
+        repo.findById(id).orElseThrow(() -> new ProductNotFoundException("Item not found"));
         repo.deleteById(id);
     }
 }

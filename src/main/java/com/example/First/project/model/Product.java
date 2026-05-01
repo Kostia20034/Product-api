@@ -1,11 +1,10 @@
-package com.example.First.project;
+package com.example.First.project.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 
-
+@Table(name = "products")
 @Entity
 public class Product {
 
@@ -15,12 +14,12 @@ public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-
+    @NotBlank(message = "Name cannot be blank")
     private String name;
+    @Min(value = 1, message = "Price must be greater than 0")
+    private double price;
 
-    private int price;
-
-    public Product(int id, String name, int price) {
+    public Product(int id, String name, double price) {
         this.id = id;
         this.name = name;
         this.price = price;
@@ -42,11 +41,11 @@ public class Product {
         this.name = name;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 }
