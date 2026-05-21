@@ -5,6 +5,9 @@ import com.example.First.project.dto.ProductResponseDTO;
 import com.example.First.project.exceptions.ProductNotFoundException;
 import com.example.First.project.model.Product;
 import com.example.First.project.repository.ProductRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -24,14 +27,9 @@ public class ProductService {
         return toResponseDTO(product);
     }
 
-    public List<ProductResponseDTO> getAllProducts() {
-        List<Product> products = repo.findAll();
-        List<ProductResponseDTO> productResponseDTOS = new ArrayList<>();
-        for(Product product : products){
-            ProductResponseDTO responseDTO = toResponseDTO(product);
-            productResponseDTOS.add(responseDTO);
-        }
-        return productResponseDTOS;
+    public Page<ProductResponseDTO> getAllProducts(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repo.findAll(pageable).map(this::toResponseDTO);
     }
 
     public ProductResponseDTO createProduct(ProductRequestDTO p) {
@@ -50,14 +48,10 @@ public class ProductService {
         return toResponseDTO(saved);
     }
 
-    public List<ProductResponseDTO> getProductByName(String name) {
-        List<Product> products = repo.findByNameContainingIgnoreCase(name);
-        List<ProductResponseDTO> productResponseDTOS = new ArrayList<>();
-        for(Product product : products){
-            ProductResponseDTO responseDTO = toResponseDTO(product);
-            productResponseDTOS.add(responseDTO);
-        }
-        return productResponseDTOS;
+    public Page<ProductResponseDTO> getProductByName(String name,int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return repo.findByNameContainingIgnoreCase(name, pageable)
+                .map(this::toResponseDTO);
     }
 
     public void deleteProductById(int id) {

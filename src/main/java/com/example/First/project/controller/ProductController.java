@@ -3,6 +3,7 @@ package com.example.First.project.controller;
 import com.example.First.project.dto.ProductRequestDTO;
 import com.example.First.project.dto.ProductResponseDTO;
 import com.example.First.project.model.Product;
+import org.springframework.data.domain.Page;
 import com.example.First.project.service.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -13,7 +14,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/products")
-@CrossOrigin(origins = "*")
 public class ProductController {
 
     private final ProductService service;
@@ -28,8 +28,10 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<List<ProductResponseDTO>> getAllProducts() {
-            return ResponseEntity.ok(service.getAllProducts());
+    public ResponseEntity<Page<ProductResponseDTO>> getAllProducts(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size){
+            return ResponseEntity.ok(service.getAllProducts(page,size));
 
     }
 
@@ -44,8 +46,11 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductResponseDTO>> getProductByName(@RequestParam String name) {
-        return ResponseEntity.ok(service.getProductByName(name));
+    public ResponseEntity<Page<ProductResponseDTO>> getProductByName(
+            @RequestParam String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        return ResponseEntity.ok(service.getProductByName(name,page,size));
     }
 
     @DeleteMapping("/{id}")
